@@ -14,12 +14,14 @@ import Custom from "./Custom.vue";
 import Select from "./Select.vue";
 import Radio from "./Radio.vue";
 import Checkbox from "./Checkbox.vue";
+import Input from "./Input.vue";
 
 const ComponentsMap = {
   Custom,
   Select,
   Radio,
-  Checkbox
+  Checkbox,
+  Input
 };
 
 export default {
