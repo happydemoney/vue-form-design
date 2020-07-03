@@ -6,9 +6,14 @@
         <form-model></form-model>
       </el-aside>
       <el-container>
-        <el-header>form handle</el-header>
+        <el-header>
+          <el-button-group>
+            <el-button type="primary" @click="viewForm">查看表单</el-button>
+            <el-button type="primary" @click="viewJSON">查看JSON</el-button>
+          </el-button-group>
+        </el-header>
         <el-main>
-          <form-widget></form-widget>
+          <form-widget ref="formWidget"></form-widget>
         </el-main>
       </el-container>
       <el-aside width="300px">form and item config set</el-aside>
@@ -27,6 +32,14 @@ export default {
   data () {
     return {
 
+    }
+  },
+  methods: {
+    viewForm () {
+      this.$refs.formWidget.dialogFormVisible = true
+    },
+    viewJSON () {
+      this.$refs.formWidget.dialogJSONVisible = true
     }
   }
 };
