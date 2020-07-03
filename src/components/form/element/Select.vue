@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       options: (this.renderConfig && this.renderConfig.options) || [],
-      val: this.value || (this.attrs.multiple ? [] : ''),
+      val: this.value || (this.renderConfig.multiple ? [] : ''),
       attrs: Object.assign(
         {
           multiple: false,
