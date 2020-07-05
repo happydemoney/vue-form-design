@@ -1,14 +1,22 @@
 <template>
   <div class="model-container">
+    <p>基础表单项</p>
     <draggable
       v-model="formItem"
-      :group="{ name: 'people', pull: 'clone', put: false }"
+      :group="{ name: 'form', pull: 'clone', put: false }"
       :sort="false"
       ghostClass='ghost'
       @start="drag=true"
       @end="drag=false"
-      :move="handleMove">
-      <div v-for="element in formItem" :key="element.prop">{{element.label}}</div>
+      tag="ul"
+      :move="handleMove"
+      class="form-item-select">
+      <li v-for="(item, index) in formItem" :key="index">
+        <span>
+          <svg-icon :icon-class="item.type" class="icon"></svg-icon>
+          {{ typeTextMap[item.type] }}
+        </span>
+      </li>
     </draggable>
   </div>
 </template>
@@ -24,6 +32,13 @@ export default {
   data () {
     return {
       drag: false,
+      typeTextMap: {
+        input: '单行文本框',
+        select: '下拉选择框',
+        radio: '单选框',
+        checkbox: '多选框',
+        custom: '自定义'
+      },
       formItem: [
         {
           type: "input",
@@ -101,6 +116,27 @@ export default {
 
 <style lang="scss" scoped>
   .model-container {
-
+    padding: 0 10px 10px;
+    .form-item-select {
+      padding-left: 0;
+      display: flex;
+      flex-wrap: wrap;
+      li {
+        width: 50%;
+        list-style: none;
+        padding: 4px;
+        box-sizing: border-box;
+        font-size: 12px;
+        > span {
+          background-color: #EBEEF5;
+          display: block;
+          padding: 8px;
+          cursor: pointer;
+          .icon {
+            font-size: 14px;
+          }
+        }
+      }
+    }
   }
 </style>

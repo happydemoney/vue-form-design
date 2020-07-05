@@ -6,7 +6,7 @@
     :model="modelValue"
     :columns="curFormAttrs.columns"
     :label-position="curFormAttrs.labelPosition"
-    :label-width="curFormAttrs.labelWidth"
+    :label-width="curFormAttrs.labelWidth + 'px'"
     :size="curFormAttrs.size"
   >
     <el-form-item
@@ -14,7 +14,7 @@
       :key="index"
       :label="item.label"
       :prop="item.prop || item.key"
-      :label-width="item.labelWidth"
+      :label-width="item.labelWidth ? item.labelWidth + 'px': undefined"
       :columns="item.columns || curFormAttrs.columns"
     >
       <form-element
@@ -73,18 +73,24 @@ export default {
     }
   },
   methods: {
-    validate(callback) {
+    validate (callback) {
       this.$refs.iForm.validate(callback);
     },
-    validateField(props, callback) {
+    validateField (props, callback) {
       this.$refs.iForm.validateField(props, callback);
     },
-    resetFields() {
+    resetFields () {
       this.$refs.iForm.resetFields();
     },
-    clearValidate(props) {
+    clearValidate (props) {
       this.$refs.iForm.clearValidate(props);
     }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.el-form {
+  display: grid;
+}
+</style>
