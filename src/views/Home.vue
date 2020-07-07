@@ -16,7 +16,7 @@
           </el-button-group>
         </el-header>
         <el-main class="widget">
-          <form-widget ref="formWidget" :widgetConfig="widgetConfig" @setActiveIndex="setActiveIndex"></form-widget>
+          <form-widget ref="formWidget" :widgetConfig="widgetConfig" @setActiveIndex="setActiveIndex" select.async="widgetConfig.formItems[activeItemIndex]"></form-widget>
         </el-main>
       </el-container>
       <el-aside width="300px">
