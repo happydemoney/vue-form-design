@@ -114,6 +114,14 @@ export default {
 }
 </script>
 
+<style lang="scss">
+  li {
+    list-style: none;
+    font-size: 12px;
+    box-sizing: border-box;
+  }
+</style>
+
 <style lang="scss" scoped>
   .model-container {
     padding: 0 10px 10px;
@@ -123,10 +131,7 @@ export default {
       flex-wrap: wrap;
       li {
         width: 50%;
-        list-style: none;
         padding: 4px;
-        box-sizing: border-box;
-        font-size: 12px;
         > span {
           background-color: #EBEEF5;
           display: block;
