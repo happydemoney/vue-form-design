@@ -15,17 +15,28 @@
         animation=200
         handle='.drag-widget'
         @start="drag=true"
-        @end="drag=false"
+        @end="handleWidgetEnd"
         @add="handleWidgetAdd">
         <el-form-item
           v-for="(item, index) in widgetConfig.formItems"
           :key="index"
-          :label="item.label"
           :prop="item.prop || item.key"
           :label-width="item.renderConfig.labelWidth ? item.renderConfig.labelWidth + 'px': undefined"
           :columns="item.renderConfig.columns || widgetConfig.formConfig.columns"
           @click.native.stop="handleSelectWidget(index)"
+          class="widget-view"
+          :class="formItemClass(item.renderConfig.columns || widgetConfig.formConfig.columns)"
         >
+          <template slot="label">
+            {{ item.label }}
+            <el-tooltip
+              v-if="item.renderConfig.labelTips"
+              :placement="item.renderConfig.labelTips.placement || 'top'"
+              :effect="item.renderConfig.labelTips.effect">
+              <i class="el-icon-question"></i>
+              <div slot="content" v-html="item.renderConfig.labelTips.content || item.renderConfig.labelTips"></div>
+            </el-tooltip>
+          </template>
           <form-element
             v-model="modelValue[item.prop || item.key]"
             :renderConfig="item.renderConfig"
@@ -33,12 +44,12 @@
           </form-element>
 
           <div class="widget-view-action" v-if="selectWidget.prop == item.prop">
-            <svg-icon icon-class="clone" class="icon-icon_clone" @click.stop="handleWidgetClone(index)"></svg-icon>
+            <!-- <svg-icon icon-class="clone" class="icon-icon_clone" @click.stop="handleWidgetClone(index)"></svg-icon> -->
             <svg-icon icon-class="delete" class="icon-trash" @click.stop="handleWidgetDelete(index)"></svg-icon>
           </div>
 
           <div class="widget-view-drag" v-if="selectWidget.prop == item.prop">
-            <svg-icon icon-class="move" class="icon-drag drag-widget" @click.stop="handleWidgetDelete(index)"></svg-icon>
+            <svg-icon icon-class="move" class="icon-drag drag-widget"></svg-icon>
           </div>
         </el-form-item>
       </draggable>
@@ -82,8 +93,9 @@ export default {
     widgetConfig: {
       type: Object
     },
-    select: {
-      type: Object
+    activeItemIndex: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -91,8 +103,7 @@ export default {
       drag: false,
       dialogFormVisible: false,
       dialogJSONVisible: false,
-      dialogFormDataVisible: false,
-      selectWidget: this.select
+      dialogFormDataVisible: false
     }
   },
   computed: {
@@ -113,15 +124,31 @@ export default {
       set (val) {
         console.log('set: ' + val)
       }
+    },
+    selectWidget () {
+      return this.widgetConfig.formItems[this.activeItemIndex]
     }
   },
   methods: {
+    formItemClass (columns) {
+      const classMap = {
+        1: 'single',
+        2: 'two',
+        3: 'three',
+        4: 'four'
+      }
+      return classMap[columns] || 'single'
+    },
+    updateActiveIndex (index) {
+      this.$emit('setActiveIndex', index)
+    },
     handleWidgetAdd (evt) {
-      console.log(evt.newIndex)
-      this.$emit('setActiveIndex', evt.newIndex)
+      this.updateActiveIndex(evt.newIndex)
+    },
+    handleWidgetEnd (evt) {
+      this.updateActiveIndex(evt.newIndex)
     },
     formConfirm () {
-      console.log(this.modelValue)
       this.dialogFormVisible = false
     },
     viewForm () {
@@ -131,24 +158,14 @@ export default {
       this.dialogJSONVisible = true
     },
     handleSelectWidget (index) {
+      this.updateActiveIndex(index)
       // this.selectWidget = this.data.list[index]
     },
     handleWidgetDelete (index) {
-      // if (this.data.list.length - 1 === index) {
-      //   if (index === 0) {
-      //     this.selectWidget = {}
-      //   } else {
-      //     this.selectWidget = this.data.list[index - 1]
-      //   }
-      // } else {
-      //   this.selectWidget = this.data.list[index + 1]
-      // }
-
-      // this.$nextTick(() => {
-      //   this.data.list.splice(index, 1)
-      // })
+      this.$emit('deleteItemByIndex', index)
     },
     handleWidgetClone (index) {
+      console.log(index)
       // let cloneData = {
       //   ...this.data.list[index],
       //   options: {...this.data.list[index].options},
@@ -180,7 +197,30 @@ export default {
   .model-container {
     position: relative;
     .el-form {
-      display: grid;
+      > div {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0px, 1fr));
+        grid-area: span 1 / span 12;
+        gap: 20px;
+        align-content: start;
+        min-height: 600px;
+        .el-form-item {
+          grid-area: span 1 / span 12;
+          margin-bottom: 0;
+          &.single {
+            grid-area: span 1 / span 12;
+          }
+          &.two {
+            grid-area: span 1 / span 6;
+          }
+          &.three {
+            grid-area: span 1 / span 4;
+          }
+          &.four {
+            grid-area: span 1 / span 3;
+          }
+        }
+      }
     }
     .form-empty {
       position: absolute;
