@@ -16,7 +16,13 @@
           </el-button-group>
         </el-header>
         <el-main class="widget">
-          <form-widget ref="formWidget" :widgetConfig="widgetConfig" @setActiveIndex="setActiveIndex" select.async="widgetConfig.formItems[activeItemIndex]"></form-widget>
+          <form-widget
+            ref="formWidget"
+            :widgetConfig="widgetConfig"
+            @setActiveIndex="setActiveIndex"
+            @deleteItemByIndex="deleteItemByIndex"
+            :activeItemIndex="activeItemIndex">
+          </form-widget>
         </el-main>
       </el-container>
       <el-aside width="300px">
@@ -54,6 +60,10 @@ export default {
   methods: {
     setActiveIndex (index) {
       this.activeItemIndex = index
+    },
+    deleteItemByIndex (index) {
+      console.log(index)
+      this.widgetConfig.formItems.splice(index, 1)
     },
     viewForm () {
       this.$refs.formWidget.viewForm()
