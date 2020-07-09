@@ -11,6 +11,55 @@
         <label>标签名: </label>
         <el-input v-model="itemConfig.label"/>
       </div>
+      <!-- options -->
+      <div class="config-item" v-if="itemConfig.renderConfig && itemConfig.renderConfig.options !== undefined">
+        <label>选项: </label>
+        <template v-if="itemConfig.type=='radio' || (itemConfig.type=='select' && !itemConfig.renderConfig.multiple)">
+          <el-radio-group v-model="itemConfig.renderConfig.defaultValue">
+            <draggable
+              tag="ul"
+              :list="itemConfig.renderConfig.options" 
+              v-bind="{group:{ name:'options'}, ghostClass: 'ghost',handle: '.drag-item'}"
+              handle=".drag-item">
+              <li v-for="(item, index) in itemConfig.renderConfig.options" :key="index" >
+                <el-radio
+                  :label="item.value" 
+                  style="margin-right: 5px;">
+                  <el-input style="width: 90px;" size="mini" v-model="item.value"></el-input>
+                  <el-input style="width: 90px;" size="mini" v-model="item.label"></el-input>
+                  <!-- <input v-model="item.value"/> -->
+                </el-radio>
+                <svg-icon class="drag-item" icon-class="MoveVertical" style="font-size: 16px; margin: 0 5px;cursor: move;"></svg-icon>
+                <el-button @click="handleOptionsRemove(index)" circle plain type="danger" size="mini" icon="el-icon-minus" style="padding: 4px;margin-left: 5px;"></el-button>
+              </li>
+            </draggable>
+          </el-radio-group>
+        </template>
+
+        <template v-if="itemConfig.type=='checkbox' || (itemConfig.type=='select' && itemConfig.renderConfig.multiple)">
+          <el-checkbox-group v-model="itemConfig.renderConfig.defaultValue">
+
+            <draggable tag="ul" :list="itemConfig.renderConfig.options" 
+              v-bind="{group:{ name:'options'}, ghostClass: 'ghost',handle: '.drag-item'}"
+              handle=".drag-item"
+            >
+              <li v-for="(item, index) in itemConfig.renderConfig.options" :key="index" >
+                <el-checkbox
+                  :label="item.value"
+                  style="margin-right: 5px;">
+                  <el-input style="width: 90px;" size="mini" v-model="item.value"></el-input>
+                  <el-input style="width: 90px;" size="mini" v-model="item.label"></el-input>
+                </el-checkbox>
+                <svg-icon class="drag-item" icon-class="MoveVertical" style="font-size: 16px; margin: 0 5px;cursor: move;"></svg-icon>
+                <el-button @click="handleOptionsRemove(index)" circle plain type="danger" size="mini" icon="el-icon-minus" style="padding: 4px;margin-left: 5px;"></el-button>
+              </li>
+            </draggable>
+          </el-checkbox-group>
+        </template>
+        <div style="margin-left: 22px;">
+          <el-button type="text" @click="handleAddOption">添加选项</el-button>
+        </div>
+      </div>
     </el-tab-pane>
     <el-tab-pane label="表单属性">
       <div class="config-item">
@@ -47,8 +96,13 @@
 </template>
 
 <script>
+import Draggable from "vuedraggable"
+
 export default {
   name: 'formConfig',
+  components: {
+    Draggable
+  },
   props: {
     itemConfig: {
       type: Object,
@@ -70,6 +124,17 @@ export default {
   },
   data () {
     return {}
+  },
+  methods: {
+    handleOptionsRemove (index) {
+      this.itemConfig.renderConfig.options.splice(index, 1)
+    },
+    handleAddOption () {
+      this.itemConfig.renderConfig.options.push({
+        value: 'value_' + new Date().getTime(),
+        label: 'label_' + new Date().getTime()
+      })
+    }
   }
 }
 </script>
@@ -78,6 +143,9 @@ export default {
   .el-tabs {
     height: 100%;
     box-sizing: border-box;
+  }
+  ul {
+    padding-left: 0;
   }
   .config-item {
     margin-bottom: 16px;
