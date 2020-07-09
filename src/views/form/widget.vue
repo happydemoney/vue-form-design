@@ -43,12 +43,12 @@
             :type="item.type">
           </form-element>
 
-          <div class="widget-view-action" v-if="selectWidget.prop == item.prop">
+          <div class="widget-view-action" v-if="selectWidget._uniqueKey == item._uniqueKey">
             <!-- <svg-icon icon-class="clone" class="icon-icon_clone" @click.stop="handleWidgetClone(index)"></svg-icon> -->
             <svg-icon icon-class="delete" class="icon-trash" @click.stop="handleWidgetDelete(index)"></svg-icon>
           </div>
 
-          <div class="widget-view-drag" v-if="selectWidget.prop == item.prop">
+          <div class="widget-view-drag" v-if="selectWidget._uniqueKey == item._uniqueKey">
             <svg-icon icon-class="move" class="icon-drag drag-widget"></svg-icon>
           </div>
         </el-form-item>
@@ -142,8 +142,24 @@ export default {
     updateActiveIndex (index) {
       this.$emit('setActiveIndex', index)
     },
+    getPropByType (type, _uniqueKey) {
+      return type + '_' + _uniqueKey
+    },
     handleWidgetAdd (evt) {
-      this.updateActiveIndex(evt.newIndex)
+      const newIndex = evt.newIndex
+      this.updateActiveIndex(newIndex)
+      // 生成唯一key
+      const _uniqueKey = Date.parse(new Date()) + '_' + Math.ceil(Math.random() * 99999)
+      const propType = this.widgetConfig.formItems[newIndex].type
+      const prop = this.getPropByType(propType, _uniqueKey)
+      this.$set(this.widgetConfig.formItems, newIndex, {
+        ...this.widgetConfig.formItems[newIndex],
+        renderConfig: {
+          ...this.widgetConfig.formItems[newIndex].renderConfig
+        },
+        _uniqueKey,
+        prop
+      })
     },
     handleWidgetEnd (evt) {
       this.updateActiveIndex(evt.newIndex)
@@ -159,35 +175,12 @@ export default {
     },
     handleSelectWidget (index) {
       this.updateActiveIndex(index)
-      // this.selectWidget = this.data.list[index]
     },
     handleWidgetDelete (index) {
       this.$emit('deleteItemByIndex', index)
     },
     handleWidgetClone (index) {
       console.log(index)
-      // let cloneData = {
-      //   ...this.data.list[index],
-      //   options: {...this.data.list[index].options},
-      //   key: Date.parse(new Date()) + '_' + Math.ceil(Math.random() * 99999)
-      // }
-
-      // if (this.data.list[index].type === 'radio' || this.data.list[index].type === 'checkbox' || this.data.list[index].type === 'select') {
-
-      //   cloneData = {
-      //     ...cloneData,
-      //     options: {
-      //       ...cloneData.options,
-      //       options: cloneData.options.options.map(item => ({...item}))
-      //     }
-      //   }
-      // }
-
-      // this.data.list.splice(index, 0, cloneData)
-
-      // this.$nextTick(() => {
-      //   this.selectWidget = this.data.list[index + 1]
-      // })
     }
   }
 }
