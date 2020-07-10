@@ -11,6 +11,22 @@
         <label>标签名: </label>
         <el-input v-model="itemConfig.label"/>
       </div>
+
+      <!-- defaultValue -->
+      <div class="config-item" v-if="itemConfig.renderConfig && itemConfig.renderConfig.defaultValue !== undefined && canSetDefalutValueList.indexOf(itemConfig.type) > -1">
+        <label>默认值: </label>
+        <el-input v-if="itemConfig.type=='textarea'" type="textarea" :rows="5" v-model="itemConfig.renderConfig.defaultValue"></el-input>
+        <el-input v-if="itemConfig.type=='input'" v-model="itemConfig.renderConfig.defaultValue"></el-input>
+        <el-rate v-if="itemConfig.type == 'rate'" style="display:inline-block;vertical-align: middle;" :max="data.renderConfig.max" :allow-half="data.options.allowHalf" v-model="data.options.defaultValue"></el-rate>
+        <el-button type="text" v-if="itemConfig.type == 'rate'" style="display:inline-block;vertical-align: middle;margin-left: 10px;" @click="data.options.defaultValue=0">{{$t('fm.actions.clear')}}</el-button>
+        <el-color-picker 
+          v-if="itemConfig.type == 'color'"
+          v-model="itemConfig.renderConfig.defaultValue"
+          :show-alpha="itemConfig.renderConfig.showAlpha"
+        ></el-color-picker>
+        <el-switch v-if="itemConfig.type=='switch'" v-model="itemConfig.renderConfig.defaultValue"></el-switch>
+      </div>
+
       <!-- options -->
       <div class="config-item" v-if="itemConfig.renderConfig && itemConfig.renderConfig.options !== undefined">
         <label>选项: </label>
@@ -59,6 +75,16 @@
         <div style="margin-left: 22px;">
           <el-button type="text" @click="handleAddOption">添加选项</el-button>
         </div>
+      </div>
+      <!-- disabled -->
+      <div class="config-item" v-if="itemConfig.renderConfig && itemConfig.renderConfig.disabled !== undefined">
+        <label>操作属性: </label>
+        <el-checkbox v-model="itemConfig.renderConfig.disabled">禁用</el-checkbox>
+      </div>
+      <!-- required -->
+      <div class="config-item" v-if="itemConfig.renderConfig && itemConfig.renderConfig.required !== undefined">
+        <label>校验: </label>
+        <el-checkbox v-model="itemConfig.renderConfig.required">必填</el-checkbox>
       </div>
     </el-tab-pane>
     <el-tab-pane label="表单属性">
@@ -123,7 +149,44 @@ export default {
     }
   },
   data () {
-    return {}
+    return {
+      validator: {
+        type: null,
+        required: null,
+        pattern: null,
+        range: null,
+        length: null
+      },
+      canSetDefalutValueList: ['textarea', 'input', 'rate', 'color', 'switch']
+    }
+  },
+   watch: {
+    // 'itemConfig.renderConfig.isRange': function(val) {
+    //   if (typeof val !== 'undefined') {
+    //     if (val) {
+    //       this.itemConfig.renderConfig.defaultValue = null
+    //     } else {
+    //       if (Object.keys(this.itemConfig.renderConfig).indexOf('defaultValue')>=0) 
+    //         this.itemConfig.renderConfig.defaultValue = ''
+    //     }
+    //   }
+    // },
+    'itemConfig.renderConfig.required': function(val) {
+      this.validateRequired(val)
+    },
+    // 'itemConfig.renderConfig.dataType': function (val) {
+    //   this.validateDataType(val)
+    // },
+    // 'itemConfig.renderConfig.pattern': function (val) {
+    //   this.valiatePattern(val)
+    // },
+    // 'data.name': function (val) {
+    //   if (this.itemConfig.renderConfig) {
+    //     this.validateRequired(this.itemConfig.renderConfig.required)
+    //     this.validateDataType(this.itemConfig.renderConfig.dataType)
+    //     this.valiatePattern(this.itemConfig.renderConfig.pattern)
+    //   }
+    // }
   },
   methods: {
     handleOptionsRemove (index) {
@@ -133,6 +196,41 @@ export default {
       this.itemConfig.renderConfig.options.push({
         value: 'value_' + new Date().getTime(),
         label: 'label_' + new Date().getTime()
+      })
+    },
+    handleSelectMuliple (value) {
+      if (value) {
+        if (this.itemConfig.renderConfig.defaultValue) {
+          this.itemConfig.renderConfig.defaultValue = [this.itemConfig.renderConfig.defaultValue]
+        } else {
+          this.itemConfig.renderConfig.defaultValue = []
+        }
+        
+      } else {
+        if (this.itemConfig.renderConfig.defaultValue.length>0){
+          this.itemConfig.renderConfig.defaultValue = this.itemConfig.renderConfig.defaultValue[0]
+        } else {
+          this.itemConfig.renderConfig.defaultValue = ''
+        }
+        
+      }
+    },
+    validateRequired (val) {
+      if (val) {
+        this.validator.required = {required: true, message: `${this.itemConfig.label}必须填写`}
+      } else {
+        this.validator.required = null
+      }
+      this.$nextTick(() => {
+        this.generateRule()
+      })
+    },
+    generateRule () {
+      this.itemConfig.rules = []
+      Object.keys(this.validator).forEach(key => {
+        if (this.validator[key]) {
+          this.itemConfig.rules.push(this.validator[key])
+        }
       })
     }
   }
