@@ -56,7 +56,7 @@
     </el-form>
     <!-- dialog form -->
     <el-dialog title="表单预览" :visible.sync="dialogFormVisible">
-      <i-form :model="modelValue" :formItems="widgetConfig.formItems" :formAttrs="widgetConfig.formConfig"></i-form>
+      <i-form :model="previewModel" :formItems="widgetConfig.formItems" :formAttrs="widgetConfig.formConfig"></i-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormDataVisible = true">获取数据</el-button>
         <el-button type="primary" @click="formConfirm">确 定</el-button>
@@ -64,7 +64,7 @@
     </el-dialog>
     <!-- dialog form data -->
     <el-dialog title="表单数据" :visible.sync="dialogFormDataVisible">
-      <pre style="overflow-y: auto">{{ JSON.stringify(modelValue, null, 4) }}</pre>
+      <pre style="overflow-y: auto">{{ JSON.stringify(previewModel, null, 4) }}</pre>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormDataVisible = false">确 定</el-button>
       </div>
@@ -103,7 +103,9 @@ export default {
       drag: false,
       dialogFormVisible: false,
       dialogJSONVisible: false,
-      dialogFormDataVisible: false
+      dialogFormDataVisible: false,
+      previewModel: null,
+      previewFormItems: []
     }
   },
   computed: {
@@ -158,7 +160,8 @@ export default {
           ...this.widgetConfig.formItems[newIndex].renderConfig
         },
         _uniqueKey,
-        prop
+        prop,
+        rules: []
       })
     },
     handleWidgetEnd (evt) {
@@ -168,6 +171,8 @@ export default {
       this.dialogFormVisible = false
     },
     viewForm () {
+      this.previewModel = JSON.parse(JSON.stringify(this.modelValue))
+      this.previewFormItems = this.widgetConfig.formItems.slice()
       this.dialogFormVisible = true
     },
     viewJSON () {
