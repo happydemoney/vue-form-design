@@ -1,36 +1,39 @@
 <template>
   <el-select
-    v-model="val"
-    :multiple="attrs.multiple"
-    :disabled="attrs.disabled"
-    :value-key="attrs.valueKey"
-    :size="attrs.size"
-    :clearable="attrs.clearable"
-    :collapse-tags="attrs.collapseTags"
-    :multiple-limit="attrs.multipleLimit"
-    :name="attrs.name"
-    :autocomplete="attrs.autocomplete"
-    :placeholder="attrs.placeholder"
-    :filterable="attrs.filterable"
-    :allow-create="attrs.allowCreate"
-    :filter-method="attrs.filterMethod"
-    :remote="attrs.remote"
-    :remote-method="attrs.remoteMethod"
-    :loading="attrs.loading"
-    :loading-text="attrs.loadingText"
-    :no-match-text="attrs.noMatchText"
-    :no-data-text="attrs.noDataText"
-    :popper-class="attrs.propperClass"
-    :reserve-keyword="attrs.reserveKeyword"
-    :default-first-option="attrs.defaultFirstOption"
-    :popper-append-to-body="attrs.popperAppendToBody"
-    :automatic-dropdown="attrs.automaticDropdown">
+    :value="val"
+    @input="handleInput"
+    :multiple="renderConfig.multiple"
+    :disabled="renderConfig.disabled"
+    :value-key="renderConfig.valueKey"
+    :size="renderConfig.size"
+    :clearable="renderConfig.clearable"
+    :collapse-tags="renderConfig.collapseTags"
+    :multiple-limit="renderConfig.multipleLimit"
+    :name="renderConfig.name"
+    :autocomplete="renderConfig.autocomplete"
+    :placeholder="renderConfig.placeholder"
+    :filterable="renderConfig.filterable"
+    :allow-create="renderConfig.allowCreate"
+    :filter-method="renderConfig.filterMethod"
+    :remote="renderConfig.remote"
+    :remote-method="renderConfig.remoteMethod"
+    :loading="renderConfig.loading"
+    :loading-text="renderConfig.loadingText"
+    :no-match-text="renderConfig.noMatchText"
+    :no-data-text="renderConfig.noDataText"
+    :popper-class="renderConfig.propperClass"
+    :reserve-keyword="renderConfig.reserveKeyword"
+    :default-first-option="renderConfig.defaultFirstOption"
+    :popper-append-to-body="renderConfig.popperAppendToBody"
+    :automatic-dropdown="renderConfig.automaticDropdown"
+  >
     <el-option
       v-for="item in options"
       :key="item.value"
       :label="item.label"
       :value="item.value"
-      :disabled="item.disabled || false">
+      :disabled="item.disabled || false"
+    >
     </el-option>
   </el-select>
 </template>
@@ -43,37 +46,15 @@ export default {
     },
     renderConfig: {
       type: Object,
-      default: null
+      default: function() {
+        return {};
+      }
     }
   },
   data() {
     return {
       options: (this.renderConfig && this.renderConfig.options) || [],
-      val: this.value || (this.renderConfig.multiple ? [] : ''),
-      attrs: Object.assign(
-        {
-          multiple: false,
-          disabled: false,
-          valueKey: "value",
-          clearable: false,
-          collapseTags: false,
-          multipleLimit: 0,
-          autocomplete: "off",
-          placeholder: "请选择",
-          filterable: false,
-          allowCreate: false,
-          remote: false,
-          loading: false,
-          loadingText: "加载中",
-          noMatchText: "无匹配数据",
-          noDataText: "无数据",
-          reserveKeyword: false,
-          defaultFirstOption: false,
-          popperAppendToBody: true,
-          automaticDropdown: false
-        },
-        this.renderConfig
-      )
+      val: this.value || (this.renderConfig.multiple ? [] : "")
     };
   },
   watch: {

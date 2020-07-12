@@ -1,12 +1,15 @@
 <template>
   <el-radio-group
-    v-model="val"
-    :disabled="attrs.disabled">
+    :value="val"
+    @input="handleInput"
+    :disabled="renderConfig.disabled"
+  >
     <el-radio
       v-for="item in options"
       :key="item.value"
       :label="item.value"
-      :disabled="item.disabled || false">
+      :disabled="item.disabled || false"
+    >
       {{ item.label }}
     </el-radio>
   </el-radio-group>
@@ -16,7 +19,7 @@
 export default {
   props: {
     value: {
-      default: ''
+      default: ""
     },
     renderConfig: {
       type: Object,
@@ -26,13 +29,7 @@ export default {
   data() {
     return {
       options: (this.renderConfig && this.renderConfig.options) || [],
-      val: this.value || '',
-      attrs: Object.assign(
-        {
-          disabled: false
-        },
-        this.renderConfig
-      )
+      val: this.value || ""
     };
   },
   watch: {

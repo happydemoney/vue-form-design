@@ -1,14 +1,17 @@
 <template>
   <el-checkbox-group
-    v-model="val"
-    :disabled="attrs.disabled"
-    :min="attrs.min"
-    :max="attrs.max">
+    :value="val"
+    @input="handleInput"
+    :disabled="renderConfig.disabled"
+    :min="renderConfig.min"
+    :max="renderConfig.max"
+  >
     <el-checkbox
       v-for="item in options"
       :key="item.value"
       :label="item.value"
-      :disabled="item.disabled || false">
+      :disabled="item.disabled || false"
+    >
       {{ item.label }}
     </el-checkbox>
   </el-checkbox-group>
@@ -18,7 +21,7 @@
 export default {
   props: {
     value: {
-      default: ''
+      default: ""
     },
     renderConfig: {
       type: Object,
@@ -28,13 +31,7 @@ export default {
   data() {
     return {
       options: (this.renderConfig && this.renderConfig.options) || [],
-      val: this.value || '',
-      attrs: Object.assign(
-        {
-          disabled: false
-        },
-        this.renderConfig
-      )
+      val: this.value || ""
     };
   },
   watch: {

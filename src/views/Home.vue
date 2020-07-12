@@ -11,8 +11,10 @@
       <el-container>
         <el-header class="handle">
           <el-button-group>
-            <el-button type="primary" @click="viewForm">查看表单</el-button>
-            <el-button type="primary" @click="viewJSON">查看JSON</el-button>
+            <el-button type="danger" @click="clear">清空</el-button>
+            <el-button type="primary" @click="viewForm">预览</el-button>
+            <el-button type="primary" @click="viewJSON">生成JSON</el-button>
+            <el-button type="primary" @click="viewCode">生成代码</el-button>
           </el-button-group>
         </el-header>
         <el-main class="widget">
@@ -21,16 +23,25 @@
             :widgetConfig="widgetConfig"
             @setActiveIndex="setActiveIndex"
             @deleteItemByIndex="deleteItemByIndex"
-            :activeItemIndex="activeItemIndex">
+            :activeItemIndex="activeItemIndex"
+          >
           </form-widget>
         </el-main>
       </el-container>
       <el-aside width="300px">
-        <form-config :itemConfig="widgetConfig.formItems[activeItemIndex]" :formConfig="widgetConfig.formConfig"></form-config>
+        <form-config
+          :itemConfig="widgetConfig.formItems[activeItemIndex]"
+          :formConfig="widgetConfig.formConfig"
+        ></form-config>
       </el-aside>
     </el-container>
     <el-footer style="height: 30px;" class="footer">
-      Power By<a target="_blank" style="margin-left: 8px;" href="https://github.com/happydemoney/vue-form-design">vue-form-design</a>
+      Power By<a
+        target="_blank"
+        style="margin-left: 8px;"
+        href="https://github.com/happydemoney/vue-form-design"
+        >vue-form-design</a
+      >
     </el-footer>
   </el-container>
 </template>
@@ -41,78 +52,90 @@ export default {
   components: {
     formModel: () => import("./form/model.vue"),
     formWidget: () => import("./form/widget.vue"),
-    formConfig: ()=> import("./form/config.vue")
+    formConfig: () => import("./form/config.vue")
   },
-  data () {
+  data() {
     return {
       widgetConfig: {
         formItems: [],
         formConfig: {
           columns: 1,
-          labelPosition: 'right',
+          labelPosition: "right",
           labelWidth: 100,
-          size: 'small'
+          size: "small"
         }
       },
       activeItemIndex: 0
-    }
+    };
   },
   methods: {
-    setActiveIndex (index) {
-      this.activeItemIndex = index
+    setActiveIndex(index) {
+      this.activeItemIndex = index;
     },
-    deleteItemByIndex (index) {
-      console.log(index)
-      this.widgetConfig.formItems.splice(index, 1)
+    deleteItemByIndex(index) {
+      if (
+        index === this.activeItemIndex &&
+        index === this.widgetConfig.formItems.length - 1 &&
+        this.activeItemIndex > 0
+      ) {
+        this.activeItemIndex -= 1;
+      }
+      this.widgetConfig.formItems.splice(index, 1);
     },
-    viewForm () {
-      this.$refs.formWidget.viewForm()
+    clear() {
+      this.widgetConfig.formItems = [];
     },
-    viewJSON () {
-      this.$refs.formWidget.viewJSON()
+    viewForm() {
+      this.$refs.formWidget.viewForm();
+    },
+    viewJSON() {
+      this.$refs.formWidget.viewJSON();
+    },
+    viewCode() {
+      this.$refs.formWidget.viewCode();
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-  .el-header {
-    display: flex;
-    align-items: center;
-    &.header {
-      background-color: #1296db;
-      > span {
-        color: #fff;
-      }
+.el-header {
+  display: flex;
+  align-items: center;
+  &.header {
+    background-color: #1296db;
+    > span {
+      color: #fff;
     }
   }
-  .model {
-    width: 250px;
-    border-right: 1px solid #e4e7ed;
-    box-sizing: border-box;
-  }
-  .form-icon {
-    font-size: 18px;
-    color: #fff;
-    margin-right: 8px;
-  }
-  .main {
-    height: calc(100% - 90px);
-    .handle {
-      justify-content: flex-end;
-      height: 40px !important;
-      border-bottom: 1px solid #e4e7ed;
-    }
-    .widget {
-      background-color: rgb(250, 250, 250);
-    }
-  }
-  .footer {
-    display: flex;
-    align-items: center;
+}
+.model {
+  width: 250px;
+  border-right: 1px solid #e4e7ed;
+  box-sizing: border-box;
+}
+.form-icon {
+  font-size: 18px;
+  color: #fff;
+  margin-right: 8px;
+}
+.main {
+  height: calc(100% - 90px);
+  .handle {
     justify-content: flex-end;
-    background: #fafafa;
-    font-size: 12px;
-    color: #409eff;
+    height: 40px !important;
+    border-bottom: 1px solid #e4e7ed;
   }
+  .widget {
+    background-color: rgb(250, 250, 250);
+  }
+}
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: #fafafa;
+  font-size: 12px;
+  color: #409eff;
+}
 </style>

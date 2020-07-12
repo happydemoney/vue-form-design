@@ -61,15 +61,15 @@ export default {
     handleInput(val) {
       this.$emit("input", val);
     },
-    upperCaseFirst (str) {
+    upperCaseFirst(str) {
       if (!str) {
-        return 'Input'
+        return "Input";
       }
-      str = str.replace(/\b\w+\b/g,(arg) => {
-        arg = arg.trim()
-        return arg.substring(0,1).toUpperCase() + arg.substring(1)
-      })
-      return str
+      str = str.replace(/\b\w+\b/g, arg => {
+        arg = arg.trim();
+        return arg.substring(0, 1).toUpperCase() + arg.substring(1);
+      });
+      return str;
     }
   }
 };

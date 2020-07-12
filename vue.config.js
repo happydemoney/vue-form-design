@@ -1,7 +1,7 @@
-'use strict'
-const path = require('path')
+"use strict";
+const path = require("path");
 function resolve(dir) {
-  return path.join(__dirname, dir)
+  return path.join(__dirname, dir);
 }
 
 module.exports = {
@@ -9,19 +9,19 @@ module.exports = {
   chainWebpack(config) {
     // set svg-sprite-loader
     config.module
-      .rule('svg')
-      .exclude.add(resolve('src/icons'))
-      .end()
+      .rule("svg")
+      .exclude.add(resolve("src/icons"))
+      .end();
     config.module
-      .rule('icons')
+      .rule("icons")
       .test(/\.svg$/)
-      .include.add(resolve('src/icons'))
+      .include.add(resolve("src/icons"))
       .end()
-      .use('svg-sprite-loader')
-      .loader('svg-sprite-loader')
+      .use("svg-sprite-loader")
+      .loader("svg-sprite-loader")
       .options({
-        symbolId: 'icon-[name]'
+        symbolId: "icon-[name]"
       })
-      .end()
+      .end();
   }
 };

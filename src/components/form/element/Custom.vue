@@ -35,8 +35,7 @@ export default {
     };
   },
   watch: {
-    value(newVal
-    ) {
+    value(newVal) {
       this.val = newVal;
     }
   },

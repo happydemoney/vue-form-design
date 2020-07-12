@@ -11,7 +11,10 @@
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-#app, body, html, .el-container {
+#app,
+body,
+html,
+.el-container {
   height: 100%;
 }
 </style>
